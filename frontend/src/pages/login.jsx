@@ -5,6 +5,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false); // UI state
+  const [error, setError]=useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,15 +14,20 @@ const Login = () => {
         "http://localhost:5000/api/auth/login",
         { email, password }
       );
-      console.log(response);
+      if(response.data.success){
+        alert("successfully login")
+      }
       
       // Typical next steps:
       // 1. Save token: localStorage.setItem('token', response.data.token);
       // 2. Redirect user: navigate('/dashboard');
       
     } catch (error) {
-      console.error(error);
-      // You can add an error state here to show an alert to the user
+     if(error.response && !error.response.data.success){
+      setError(error.response.data.error)
+     }else{
+      setError("server error")
+     }
     }
   };
 
@@ -38,6 +44,7 @@ const Login = () => {
           
           {/* Email Input */}
           <div className="flex flex-col gap-2">
+            {error&&<p className="text-red-500">{error}</p>}
             <label htmlFor="email" className="text-sm font-semibold text-gray-600">
               Email Address
             </label>
@@ -85,6 +92,8 @@ const Login = () => {
               Forgot Password?
             </a>
           </div>
+
+
 
           {/* Submit Button */}
           <button

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/Users.js";
-import bcrypt from 'bcrypt'; // or 'bcryptjs' — match your package.json
+import bcrypt from 'bcryptjs'; // or 'bcryptjs' — match your package.json
 
 const login = async (req, res) => {
     try {
@@ -29,8 +29,9 @@ const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Login controller runtime error:", error);
-        return res.status(500).json({ success: false, error: "Internal Server Error" });
+        console.error("Login controller runtime error:", error.message); // add .message
+    console.error("Full error:", error); // add this line
+    return res.status(500).json({ success: false, error: error.message })
     }
 };
 

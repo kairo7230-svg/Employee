@@ -1,11 +1,11 @@
+import 'dotenv/config'; // ← ADD THIS FIRST
 import User from './models/Users.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import connectToDb from './db/db.js'; // Import the function
+import connectToDb from './db/db.js';
 
 const userRegister = async () => {
     try {
-        // 1. MUST wait for the connection before doing anything else
         await connectToDb(); 
 
         const hasPassword = await bcrypt.hash("admin", 10);
@@ -23,7 +23,6 @@ const userRegister = async () => {
     } catch (error) {
         console.log("❌ Error:", error);
     } finally {
-        // 2. Close the connection so the script finishes and exits the terminal
         await mongoose.disconnect();
     }
 }

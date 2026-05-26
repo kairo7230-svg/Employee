@@ -1,3 +1,4 @@
+import 'dotenv/config'; // ← ADD THIS AS FIRST LINE
 import express from 'express';
 import cors from 'cors';
 import authRouter from './Routes/auth.js';
