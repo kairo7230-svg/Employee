@@ -2,6 +2,46 @@ import jwt from "jsonwebtoken";
 import User from "../models/Users.js";
 import bcrypt from 'bcryptjs'; // or 'bcryptjs' — match your package.json
 
+const signup = async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !password || !role) {
+            return res.status(400).json({ success: false, error: "All fields are required" });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({ success: false, error: "Email already in use" });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create new user
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role
+        });
+
+        await newUser.save();
+
+        return res.status(201).json({
+            success: true,
+            message: "User created successfully",
+            user: { _id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role }
+        });
+
+    } catch (error) {
+        console.error("Signup controller error:", error.message);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -34,5 +74,7 @@ const login = async (req, res) => {
     return res.status(500).json({ success: false, error: error.message })
     }
 };
-
-export { login };
+const verify = async (req, res) => {
+    return res.status(200).json({ success: true, user: req.user });
+}
+export { signup, login ,verify};

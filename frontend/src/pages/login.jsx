@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
+import {useAuth} from "../context/authContext.js"
+import { useNavigate, Link } from "react-router-dom";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false); // UI state
   const [error, setError]=useState(null)
+  const {login} = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,12 +19,14 @@ const Login = () => {
         { email, password }
       );
       if(response.data.success){
-        alert("successfully login")
+       login(response.data.user)
+       localStorage.setItem("token",response.data.token);
+       if(response.data.user.role==="admin"){
+       navigate("/admin-dashboard")
+       }else{
+        navigate("/emp-dashboard")
+       }
       }
-      
-      // Typical next steps:
-      // 1. Save token: localStorage.setItem('token', response.data.token);
-      // 2. Redirect user: navigate('/dashboard');
       
     } catch (error) {
      if(error.response && !error.response.data.success){
@@ -79,18 +85,7 @@ const Login = () => {
 
           {/* Actions */}
           <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 text-gray-600 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              Remember me
-            </label>
-            <a href="#forgot" className="text-indigo-600 hover:text-purple-700 hover:underline transition-colors font-medium">
-              Forgot Password?
-            </a>
+            
           </div>
 
 
@@ -104,13 +99,14 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <a href="#signup" className="font-bold text-indigo-600 hover:underline">
-            Sign up
-          </a>
-        </p>
 
+        {/* Signup Link */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <Link to="/signup" className="font-semibold text-indigo-600 hover:text-indigo-700">
+            Sign up here
+          </Link>
+        </p>
       </div>
     </div>
   );

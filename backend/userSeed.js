@@ -1,4 +1,4 @@
-import 'dotenv/config'; // ← ADD THIS FIRST
+// import 'dotenv/config'; // ← ADD THIS FIRST
 import User from './models/Users.js';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
